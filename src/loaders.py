@@ -1,7 +1,9 @@
 import csv
+import glob
 import json
 import logging
 import os
+import requests
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -175,4 +177,118 @@ class AtsJsonLoader:
         except Exception as e:
             logger.error(f"Failed to extract ATS JSON via Gemini: {e}")
 
+        return records
+
+class NotesLoader:
+    """
+    Loads candidate data from a folder of unstructured recruiter notes (.txt files).
+    Reuses the robust AtsExtractionList schemas to ensure determinism.
+    """
+    def __init__(self, folder_path: str):
+        self.folder_path = folder_path
+        self.method = "gemini_schema_extraction"
+        
+        api_key = os.environ.get("GEMINI_API_KEY", "")
+        self.client = genai.Client(api_key=api_key) if api_key and genai else None
+
+    def load(self) -> List[SourceRecord]:
+        records = []
+        if not self.client:
+            logger.error("GEMINI_API_KEY missing. Could not parse Notes.")
+            return records
+            
+        txt_files = glob.glob(os.path.join(self.folder_path, "*.txt"))
+        if not txt_files:
+            logger.warning(f"No .txt files found in {self.folder_path}")
+            return records
+
+        for file_path in txt_files:
+            try:
+                with open(file_path, mode='r', encoding='utf-8') as f:
+                    raw_text = f.read()
+
+                prompt = (
+                    "You are an expert data extraction system. "
+                    "The following text contains unstructured recruiter notes about a candidate. "
+                    "Extract the candidate and map the data precisely into the requested schema. "
+                    "CRITICAL: Do not invent, hallucinate, or insert any data that is not explicitly present in the text. "
+                    "If a field is missing, return null. "
+                    "Ensure all dates, country codes, and formats strictly adhere to the field descriptions."
+                )
+
+                config = types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=AtsExtractionList,
+                    temperature=0.1,
+                    automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True)
+                )
+
+                response = self.client.models.generate_content(
+                    model='gemini-3.5-flash',
+                    contents=[prompt, raw_text],
+                    config=config
+                )
+
+                if response.parsed and response.parsed.candidates:
+                    for extracted_cand in response.parsed.candidates:
+                        candidate = ExtractedCandidate(**extracted_cand.model_dump())
+                        records.append(SourceRecord(
+                            source_name=os.path.basename(file_path),
+                            method=self.method,
+                            data=candidate
+                        ))
+            except Exception as e:
+                logger.error(f"Failed to extract Notes from {file_path} via Gemini: {e}")
+
+        return records
+
+class GitHubLoader:
+    """
+    Fetches public GitHub profile data.
+    Gracefully degrades if the API is rate-limited or fails.
+    """
+    def __init__(self, username: str):
+        self.username = username
+        self.source_name = "GitHub_API"
+        self.method = "api_fetch"
+        
+    def load(self) -> List[SourceRecord]:
+        records = []
+        try:
+            url = f"https://api.github.com/users/{self.username}"
+            headers = {"Accept": "application/vnd.github.v3+json"}
+            
+            # Optional: use GITHUB_TOKEN to avoid severe rate limiting
+            token = os.environ.get("GITHUB_TOKEN")
+            if token:
+                headers["Authorization"] = f"token {token}"
+                
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            
+            name = data.get("name")
+            email = data.get("email")
+            location = data.get("location")
+            bio = data.get("bio")
+            blog = data.get("blog")
+            
+            candidate = ExtractedCandidate(
+                full_name=name,
+                emails=[email] if email else [],
+                city=location, 
+                headline=bio,
+                portfolio=blog,
+                github=data.get("html_url")
+            )
+            
+            records.append(SourceRecord(
+                source_name=self.source_name,
+                method=self.method,
+                data=candidate
+            ))
+            
+        except requests.exceptions.RequestException as e:
+            logger.warning(f"Failed to fetch GitHub profile for {self.username}. Gracefully degrading. Error: {e}")
+            
         return records
