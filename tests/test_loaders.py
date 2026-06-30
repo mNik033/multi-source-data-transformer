@@ -73,7 +73,7 @@ def test_ats_json_loader_gemini_mock(mock_genai_client_class):
 
 @patch('loaders.genai.Client')
 def test_notes_loader_gemini_mock(mock_genai_client_class):
-    """Verify that NotesLoader dynamically loops over txt notes and parses them using Gemini."""
+    """Verify that NotesLoader dynamically batches txt notes and parses them in a single Gemini call."""
     os.environ["GEMINI_API_KEY"] = "fake-api-key"
     
     mock_client = MagicMock()
@@ -87,7 +87,8 @@ def test_notes_loader_gemini_mock(mock_genai_client_class):
         phones=[],
         city="SF",
         experience=[],
-        education=[]
+        education=[],
+        source_file="jane_notes.txt"
     )
     mock_parsed_response = AtsExtractionList(candidates=[mock_candidate])
     

@@ -110,6 +110,7 @@ class AtsCandidateExtraction(BaseModel):
     skills: List[str] = Field(default_factory=list, description="A list of technical and professional skills derived.")
     experience: List[AtsExperienceExtraction] = Field(default_factory=list, description="The candidate's work history.")
     education: List[AtsEducationExtraction] = Field(default_factory=list, description="The candidate's educational background.")
+    source_file: str | None = Field(default=None, description="If the input text specifies a source file or note name for this candidate, capture it here.")
 
 class AtsExtractionList(BaseModel):
     candidates: List[AtsCandidateExtraction] = Field(
@@ -202,43 +203,56 @@ class NotesLoader:
             logger.warning(f"No .txt files found in {self.folder_path}")
             return records
 
+        combined_text = ""
         for file_path in txt_files:
             try:
                 with open(file_path, mode='r', encoding='utf-8') as f:
-                    raw_text = f.read()
-
-                prompt = (
-                    "You are an expert data extraction system. "
-                    "The following text contains unstructured recruiter notes about a candidate. "
-                    "Extract the candidate and map the data precisely into the requested schema. "
-                    "CRITICAL: Do not invent, hallucinate, or insert any data that is not explicitly present in the text. "
-                    "If a field is missing, return null. "
-                    "Ensure all dates, country codes, and formats strictly adhere to the field descriptions."
-                )
-
-                config = types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                    response_schema=AtsExtractionList,
-                    temperature=0.1,
-                    automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True)
-                )
-
-                response = self.client.models.generate_content(
-                    model='gemini-3.5-flash',
-                    contents=[prompt, raw_text],
-                    config=config
-                )
-
-                if response.parsed and response.parsed.candidates:
-                    for extracted_cand in response.parsed.candidates:
-                        candidate = ExtractedCandidate(**extracted_cand.model_dump())
-                        records.append(SourceRecord(
-                            source_name=os.path.basename(file_path),
-                            method=self.method,
-                            data=candidate
-                        ))
+                    content = f.read()
+                    filename = os.path.basename(file_path)
+                    combined_text += f"\n--- START OF NOTE: {filename} ---\n{content}\n--- END OF NOTE: {filename} ---\n"
             except Exception as e:
-                logger.error(f"Failed to extract Notes from {file_path} via Gemini: {e}")
+                logger.error(f"Failed to read file {file_path}: {e}")
+
+        if not combined_text.strip():
+            return records
+
+        try:
+            prompt = (
+                "You are an expert data extraction system. "
+                "The following text contains unstructured recruiter notes for MULTIPLE candidates. "
+                "Each note is separated by delimiters like '--- START OF NOTE: filename.txt ---'. "
+                "Extract all candidates from all notes and map the data precisely into the requested schema. "
+                "CRITICAL: You MUST populate the `source_file` field with the filename provided in the delimiter for that candidate! "
+                "Do not invent, hallucinate, or insert any data that is not explicitly present. "
+                "If a field is missing, return null. "
+                "Ensure all dates, country codes, and formats strictly adhere to the field descriptions."
+            )
+
+            config = types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=AtsExtractionList,
+                temperature=0.1,
+                automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True)
+            )
+
+            response = self.client.models.generate_content(
+                model='gemini-3.5-flash',
+                contents=[prompt, combined_text],
+                config=config
+            )
+
+            if response.parsed and response.parsed.candidates:
+                for extracted_cand in response.parsed.candidates:
+                    # Exclude the new source_file field when dumping into the internal schema
+                    candidate = ExtractedCandidate(**extracted_cand.model_dump(exclude={'source_file'}))
+                    src_name = extracted_cand.source_file if extracted_cand.source_file else "Unknown_Note"
+                    records.append(SourceRecord(
+                        source_name=src_name,
+                        method=self.method,
+                        data=candidate
+                    ))
+        except Exception as e:
+            logger.error(f"Failed to extract Notes via Gemini: {e}")
 
         return records
 
