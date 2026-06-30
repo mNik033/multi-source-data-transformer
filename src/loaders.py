@@ -1,6 +1,15 @@
 import csv
+import json
 import logging
+import os
+from dotenv import load_dotenv
+from google import genai
+from google.genai import types
+from pydantic import BaseModel, Field
 from typing import List
+
+load_dotenv()
+
 from models import SourceRecord, ExtractedCandidate, ExtractedExperience
 
 logger = logging.getLogger(__name__)
@@ -68,5 +77,102 @@ class CSVLoader:
             logger.error(f"CSV file not found: {self.file_path}")
         except Exception as e:
             logger.error(f"Failed to read CSV {self.file_path}: {e}")
+
+        return records
+
+class AtsExperienceExtraction(BaseModel):
+    company: str = Field(description="The name of the company where the candidate worked.")
+    title: str = Field(description="The job title held by the candidate.")
+    start: str | None = Field(default=None, description="Start date strictly in YYYY-MM format. Normalize any variation (e.g., 'January 2020', 'Jan-20', '01/2020') to '2020-01'.")
+    end: str | None = Field(default=None, description="End date strictly in YYYY-MM format, or 'Present'. Normalize any variation (e.g., 'current', 'Present', 'Now') to 'Present'.")
+    summary: str | None = Field(default=None, description="A brief summary of the role or responsibilities. Extract this exactly as-is. Do not add or modify the summary. Do not add any extra information.")
+
+class AtsEducationExtraction(BaseModel):
+    institution: str = Field(description="The name of the university or school.")
+    degree: str | None = Field(default=None, description="The degree obtained. Normalize any variation (e.g., 'Bachelor of Science', 'B.Sc') to their full forms like 'Bachelor of Science', 'Master of Science', 'Doctor of Philosophy'.")
+    field_of_study: str | None = Field(default=None, description="The major or field of study. Normalize variations (e.g., 'CS', 'Comp Sci') to full names (e.g., 'Computer Science').")
+    end_year: str | None = Field(default=None, description="The year of graduation strictly in YYYY format. Normalize any variation (e.g., 'Class of 23', '2023') to '2023'.")
+
+class AtsCandidateExtraction(BaseModel):
+    full_name: str | None = Field(default=None, description="The candidate's full name.")
+    emails: List[str] = Field(default_factory=list, description="A list of all email addresses found for the candidate.")
+    phones: List[str] = Field(default_factory=list, description="A list of all phone numbers found for the candidate. Normalize to E.164 format (e.g., '(555) 123-4567' to '+15551234567') if possible.")
+    city: str | None = Field(default=None, description="The city where the candidate is located.")
+    region: str | None = Field(default=None, description="The state or region where the candidate is located.")
+    country: str | None = Field(default=None, description="Must be a 2-letter ISO-3166 Alpha-2 country code. Normalize any variation (e.g., 'United States', 'USA', 'U.S.') to 'US'.")
+    linkedin: str | None = Field(default=None, description="The candidate's LinkedIn URL.")
+    github: str | None = Field(default=None, description="The candidate's GitHub URL.")
+    portfolio: str | None = Field(default=None, description="The candidate's personal website or portfolio URL.")
+    headline: str | None = Field(default=None, description="The candidate's headline or professional summary.")
+    years_experience: float | None = Field(default=None, description="Total years of professional experience, if stated or calculable.")
+    skills: List[str] = Field(default_factory=list, description="A list of technical and professional skills derived.")
+    experience: List[AtsExperienceExtraction] = Field(default_factory=list, description="The candidate's work history.")
+    education: List[AtsEducationExtraction] = Field(default_factory=list, description="The candidate's educational background.")
+
+class AtsExtractionList(BaseModel):
+    candidates: List[AtsCandidateExtraction] = Field(
+        description="A list of all candidates extracted from the ATS JSON payload."
+    )
+
+class AtsJsonLoader:
+    """
+    Loads candidates from a messy/semi-structured ATS JSON export.
+    Uses Gemini structured extraction to map arbitrary fields to our schema.
+    """
+    def __init__(self, file_path: str):
+        self.file_path = file_path
+        self.source_name = "ATS_JSON"
+        self.method = "gemini_schema_extraction"
+        
+        # Initialize Gemini Client
+        api_key = os.environ.get("GEMINI_API_KEY", "")
+        self.client = genai.Client(api_key=api_key) if api_key and genai else None
+
+    def load(self) -> List[SourceRecord]:
+        records = []
+        if not self.client:
+            logger.error("GEMINI_API_KEY missing. Could not parse ATS JSON.")
+            return records
+            
+        try:
+            with open(self.file_path, mode='r', encoding='utf-8') as f:
+                raw_json = f.read()
+
+            prompt = (
+                "You are an expert data extraction system. "
+                "The following text is an ATS JSON export containing one or more candidate profiles. "
+                "The schema is unknown and may have strange or nested field names. "
+                "Extract all candidates and map the data precisely into the requested schema. "
+                "CRITICAL: Do not invent, hallucinate, or insert any data that is not explicitly present in the text. "
+                "If a field is missing, return null. "
+                "Ensure all dates, country codes, and formats strictly adhere to the field descriptions."
+            )
+
+            config = types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=AtsExtractionList,
+                temperature=0.1,
+                automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True)
+            )
+
+            response = self.client.models.generate_content(
+                model='gemini-3.5-flash',
+                contents=[prompt, raw_json],
+                config=config
+            )
+
+            if response.parsed and response.parsed.candidates:
+                for extracted_cand in response.parsed.candidates:
+                    candidate = ExtractedCandidate(**extracted_cand.model_dump())
+                    records.append(SourceRecord(
+                        source_name=self.source_name,
+                        method=self.method,
+                        data=candidate
+                    ))
+                    
+        except FileNotFoundError:
+            logger.error(f"ATS JSON file not found: {self.file_path}")
+        except Exception as e:
+            logger.error(f"Failed to extract ATS JSON via Gemini: {e}")
 
         return records
