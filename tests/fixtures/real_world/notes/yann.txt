@@ -1,0 +1,3 @@
+Yann LeCun - Screening
+Spoke with Yann today. He was very adamant that autoregressive LLMs are a dead end and that we need to focus on Joint Embedding Predictive Architectures (JEPA). 
+He is clearly a visionary (Chief AI Scientist at Meta), but it might be hard to convince him to work on our standard GPT-wrapper product. Let's pass.

@@ -1,0 +1,11 @@
+name,email,phone,current_company,title
+Sam Altman,sam@openai.com,(555) 123-0001,OpenAI,CEO
+Linus Torvalds,linus@linux.org,(555) 123-0002,Linux Foundation,Fellow
+Dario Amodei,dario@anthropic.com,(555) 123-0003,Anthropic,CEO
+Bjarne Stroustrup,bjarne@cplusplus.com,,Morgan Stanley,Managing Director
+Yann LeCun,yann@meta.com,,Meta,Chief AI Scientist
+Ilya Sutskever,ilya@ssi.inc,(555) 123-0006,SSI,Founder
+Demis Hassabis,demis@deepmind.com,,Google DeepMind,CEO
+Andrew Ng,andrew@deeplearning.ai,(555) 123-0008,DeepLearning.AI,Founder
+Fei-Fei Li,feifei@stanford.edu,,Stanford University,Professor
+Geoffrey Hinton,hinton@toronto.edu,(555) 123-0010,University of Toronto,Professor Emeritus

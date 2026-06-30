@@ -1,0 +1,136 @@
+{
+  "export_version": "v2.1",
+  "data": [
+    {
+      "candidate_name": "Samuel Altman",
+      "contact": {
+        "email": "sam@openai.com",
+        "mobile": "+1 555-123-0001",
+        "github": "https://github.com/samaltman"
+      },
+      "location": "San Francisco, CA, USA",
+      "skills": ["Management", "Startups", "AI", "Investments"],
+      "work_history": [
+        {"employer": "OpenAI", "role": "Chief Executive Officer", "from": "2015", "to": "Present"},
+        {"employer": "Y Combinator", "role": "President", "from": "2014", "to": "2019"}
+      ],
+      "education": [
+        {"school": "Stanford University", "degree": "Computer Science (Dropped Out)"}
+      ]
+    },
+    {
+      "candidate_name": "Linus Torvalds",
+      "contact": {
+        "email": "torvalds@linux-foundation.org",
+        "github": "https://github.com/torvalds"
+      },
+      "location": "Portland, OR, USA",
+      "skills": ["C", "Linux Kernel", "Git", "Operating Systems"],
+      "work_history": [
+        {"employer": "Linux Foundation", "role": "Fellow", "from": "2003", "to": "Present"}
+      ],
+      "education": [
+        {"school": "University of Helsinki", "degree": "Master of Science in Computer Science", "grad_year": "1996"}
+      ]
+    },
+    {
+      "candidate_name": "Dario Amodei",
+      "contact": {
+        "email": "dario@anthropic.com",
+        "github": "https://github.com/darioamodei"
+      },
+      "location": "San Francisco, CA",
+      "skills": ["AI Safety", "Machine Learning", "Physics"],
+      "work_history": [
+        {"employer": "Anthropic", "role": "CEO & Co-Founder", "from": "2021", "to": "Present"},
+        {"employer": "OpenAI", "role": "VP of Research", "from": "2016", "to": "2020"}
+      ]
+    },
+    {
+      "candidate_name": "Bjarne Stroustrup",
+      "contact": {
+        "email": "bjarne@cplusplus.com"
+      },
+      "location": "New York, USA",
+      "skills": ["C++", "Programming Languages", "Systems Programming"],
+      "work_history": [
+        {"employer": "Morgan Stanley", "role": "Managing Director", "from": "2014", "to": "2022"},
+        {"employer": "Columbia University", "role": "Visiting Professor", "from": "2014", "to": "Present"}
+      ]
+    },
+    {
+      "candidate_name": "Yann LeCun",
+      "contact": {
+        "email": "yann@meta.com",
+        "github": "https://github.com/ylecun"
+      },
+      "location": "New York, USA",
+      "skills": ["Deep Learning", "Computer Vision", "AI"],
+      "work_history": [
+        {"employer": "Meta", "role": "VP & Chief AI Scientist", "from": "2013", "to": "Present"},
+        {"employer": "NYU", "role": "Silver Professor", "from": "2003", "to": "Present"}
+      ]
+    },
+    {
+      "candidate_name": "Ilya Sutskever",
+      "contact": {
+        "email": "ilya@openai.com" 
+      },
+      "location": "San Francisco, CA",
+      "skills": ["Deep Learning", "Neural Networks"],
+      "work_history": [
+        {"employer": "OpenAI", "role": "Chief Scientist", "from": "2015", "to": "2024"},
+        {"employer": "Google", "role": "Research Scientist", "from": "2013", "to": "2015"}
+      ]
+    },
+    {
+      "candidate_name": "Demis Hassabis",
+      "contact": {
+        "email": "demis@deepmind.com"
+      },
+      "location": "London, UK",
+      "skills": ["AI", "Neuroscience", "Game AI", "AlphaGo"],
+      "work_history": [
+        {"employer": "Google DeepMind", "role": "CEO", "from": "2014", "to": "Present"},
+        {"employer": "DeepMind", "role": "CEO & Co-Founder", "from": "2010", "to": "2014"}
+      ]
+    },
+    {
+      "candidate_name": "Andrew Ng",
+      "contact": {
+        "email": "andrew@deeplearning.ai",
+        "github": "https://github.com/andrewng"
+      },
+      "location": "Palo Alto, CA",
+      "skills": ["Machine Learning", "Online Education", "Robotics"],
+      "work_history": [
+        {"employer": "DeepLearning.AI", "role": "Founder", "from": "2017", "to": "Present"},
+        {"employer": "Baidu", "role": "Chief Scientist", "from": "2014", "to": "2017"}
+      ]
+    },
+    {
+      "candidate_name": "Fei-Fei Li",
+      "contact": {
+        "email": "feifei@stanford.edu"
+      },
+      "location": "Stanford, CA",
+      "skills": ["Computer Vision", "Cognitive Neuroscience", "AI"],
+      "work_history": [
+        {"employer": "Stanford University", "role": "Professor", "from": "2009", "to": "Present"},
+        {"employer": "Google Cloud", "role": "Chief Scientist of AI/ML", "from": "2017", "to": "2018"}
+      ]
+    },
+    {
+      "candidate_name": "Geoffrey Hinton",
+      "contact": {
+        "email": "hinton@toronto.edu"
+      },
+      "location": "Toronto, Canada",
+      "skills": ["Neural Networks", "Deep Learning", "Backpropagation"],
+      "work_history": [
+        {"employer": "Google", "role": "VP and Engineering Fellow", "from": "2013", "to": "2023"},
+        {"employer": "University of Toronto", "role": "Professor", "from": "1987", "to": "Present"}
+      ]
+    }
+  ]
+}

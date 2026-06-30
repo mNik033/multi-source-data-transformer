@@ -1,0 +1,4 @@
+Bjarne Stroustrup - Systems round.
+He basically invented C++. He spent the entire hour critiquing our use of garbage-collected languages and explaining why we should rewrite our backend in C++. 
+Incredibly knowledgeable, but might clash with our Python-heavy stack.
+His email is bjarne@cplusplus.com. Hire, but only for the high-frequency trading desk.

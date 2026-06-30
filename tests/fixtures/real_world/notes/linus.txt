@@ -1,0 +1,7 @@
+Candidate: Linus Torvalds
+Round: Code Review
+
+Feedback: Very abrasive during the pairing session. He got visibly frustrated when asked to use modern web tooling and insisted on writing everything in C. He's obviously a genius (created Linux and Git) but might not be a culture fit for our collaborative frontend team.
+
+I tried emailing him at torvalds@linux-foundation.org and linus@linux.org to follow up but he was pretty dismissive.
+Recommendation: Strong No Hire due to behavioral.

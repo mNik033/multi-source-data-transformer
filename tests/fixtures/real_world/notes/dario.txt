@@ -1,0 +1,3 @@
+Dario Amodei - Final Round
+Really strong on AI Safety and scaling laws. He seems very concerned about the alignment problem. Great technical depth, though he kept referencing Anthropic's internal models which we obviously can't use. 
+Strong hire for the safety team.

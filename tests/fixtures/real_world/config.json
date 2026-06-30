@@ -1,0 +1,11 @@
+[
+  {"field": "name", "path": "full_name", "type": "string"},
+  {"field": "primary_email", "path": "emails[0]", "type": "string"},
+  {"field": "all_emails", "path": "emails", "type": "list"},
+  {"field": "phone", "path": "phones[0]", "type": "string", "on_missing": "omit"},
+  {"field": "city", "path": "location.city", "type": "string", "on_missing": "null"},
+  {"field": "skills", "path": "skills[].name", "type": "list"},
+  {"field": "github", "path": "links.github", "type": "string", "on_missing": "omit"},
+  {"field": "current_employer", "path": "experience[0].company", "type": "string", "on_missing": "omit"},
+  {"field": "confidence", "path": "overall_confidence", "type": "float"}
+]

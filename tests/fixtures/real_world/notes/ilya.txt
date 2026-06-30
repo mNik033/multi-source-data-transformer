@@ -1,0 +1,7 @@
+Interview Feedback - Ilya Sutskever
+
+Technical Round 1: Great system design skills. He deeply understands Neural Networks and scaling AGI systems. However, he sometimes got bogged down in theoretical tangents instead of writing concrete code. Needs a bit of steering under pressure.
+
+I reached out to his personal email (ilya@ssi.inc) to schedule the next round since he mentioned he doesn't use his ilya@openai.com anymore.
+Checked his GitHub (https://github.com/ilyasu) - very impressive open source contributions.
+Recommendation: Move to onsite.
