@@ -151,12 +151,16 @@ class CandidateMerger:
                     conf = get_confidence(field, src)
                     current_conf = scalars[field]["conf"]
                     
-                    if conf > current_conf:
-                        scalars[field] = {"val": val, "conf": conf, "src": src, "method": ext_method}
-                    elif conf == current_conf and val == scalars[field]["val"]:
-                        # Consensus boost! Multiple sources perfectly agree.
+                    if val == scalars[field]["val"]:
+                        # Consensus boost! Multiple sources agree on the same value.
                         new_conf = 1 - ((1 - current_conf) * (1 - conf))
                         scalars[field]["conf"] = new_conf
+                        if conf > current_conf:
+                            scalars[field]["src"] = src
+                            scalars[field]["method"] = ext_method
+                    elif conf > current_conf:
+                        # Value mismatch, but this source is more trusted. Overwrite.
+                        scalars[field] = {"val": val, "conf": conf, "src": src, "method": ext_method}
             
             # 2. Merge Lists
             if data.emails:
