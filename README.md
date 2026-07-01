@@ -47,7 +47,7 @@ python src/cli.py \
   --ats tests/fixtures/real_world/ats.json \
   --notes tests/fixtures/real_world/notes \
   --config tests/fixtures/real_world/config.json \
-  --out final_legendary_profiles.json
+  --out test_output.json
 ```
 
 ## Projection Configuration Formats

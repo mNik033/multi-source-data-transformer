@@ -1,0 +1,876 @@
+[
+  {
+    "name": "Samuel Altman",
+    "primary_email": "sam@openai.com",
+    "all_emails": [
+      "sam@openai.com"
+    ],
+    "phone": "+15551230001",
+    "city": "San Francisco",
+    "skills": [
+      "management",
+      "startups",
+      "ai",
+      "investments"
+    ],
+    "github": "https://github.com/samaltman",
+    "current_employer": "OpenAI",
+    "confidence": 0.828,
+    "provenance": [
+      {
+        "field": "emails",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "phones",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "phones",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "full_name",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "city",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "region",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "country",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "github",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "years_experience",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[management]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[startups]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[ai]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[investments]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[OpenAI]",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "experience[OpenAI]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[Y Combinator]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "education[Stanford University]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      }
+    ]
+  },
+  {
+    "name": "Linus Torvalds",
+    "primary_email": "linus@linux.org",
+    "all_emails": [
+      "linus@linux.org"
+    ],
+    "phone": "(555) 123-0002",
+    "city": null,
+    "skills": null,
+    "current_employer": "Linux Foundation",
+    "confidence": 0.8,
+    "provenance": [
+      {
+        "field": "emails",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "phones",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "full_name",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "experience[Linux Foundation]",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      }
+    ]
+  },
+  {
+    "name": "Dario Amodei",
+    "primary_email": "dario@anthropic.com",
+    "all_emails": [
+      "dario@anthropic.com"
+    ],
+    "phone": "(555) 123-0003",
+    "city": "San Francisco",
+    "skills": [
+      "ai safety",
+      "machine learning",
+      "physics"
+    ],
+    "github": "https://github.com/darioamodei",
+    "current_employer": "Anthropic",
+    "confidence": 0.828,
+    "provenance": [
+      {
+        "field": "emails",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "phones",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "full_name",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "city",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "region",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "country",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "github",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "years_experience",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[ai safety]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[machine learning]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[physics]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[Anthropic]",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "experience[Anthropic]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[OpenAI]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      }
+    ]
+  },
+  {
+    "name": "Bjarne Stroustrup",
+    "primary_email": "bjarne@cplusplus.com",
+    "all_emails": [
+      "bjarne@cplusplus.com"
+    ],
+    "city": "New York",
+    "skills": [
+      "c++",
+      "programming languages",
+      "systems programming"
+    ],
+    "current_employer": "Morgan Stanley",
+    "confidence": 0.843,
+    "provenance": [
+      {
+        "field": "emails",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "full_name",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "city",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "country",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "years_experience",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[c++]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[programming languages]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[systems programming]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[Morgan Stanley]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[Columbia University]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      }
+    ]
+  },
+  {
+    "name": "Yann LeCun",
+    "primary_email": "yann@meta.com",
+    "all_emails": [
+      "yann@meta.com"
+    ],
+    "city": "New York",
+    "skills": [
+      "deep learning",
+      "computer vision",
+      "ai"
+    ],
+    "github": "https://github.com/ylecun",
+    "current_employer": "Meta",
+    "confidence": 0.817,
+    "provenance": [
+      {
+        "field": "emails",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "full_name",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "city",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "country",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "github",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "portfolio",
+        "source": "GitHub_API",
+        "method": "api_fetch"
+      },
+      {
+        "field": "years_experience",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[deep learning]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[computer vision]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[ai]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[Meta]",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "experience[Meta]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[NYU]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      }
+    ]
+  },
+  {
+    "name": "Ilya Sutskever",
+    "primary_email": "ilya@ssi.inc",
+    "all_emails": [
+      "ilya@ssi.inc"
+    ],
+    "phone": "(555) 123-0006",
+    "city": null,
+    "skills": null,
+    "current_employer": "SSI",
+    "confidence": 0.8,
+    "provenance": [
+      {
+        "field": "emails",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "phones",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "full_name",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "experience[SSI]",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      }
+    ]
+  },
+  {
+    "name": "Demis Hassabis",
+    "primary_email": "demis@deepmind.com",
+    "all_emails": [
+      "demis@deepmind.com"
+    ],
+    "city": "London",
+    "skills": [
+      "ai",
+      "neuroscience",
+      "game ai",
+      "alphago"
+    ],
+    "current_employer": "Google DeepMind",
+    "confidence": 0.843,
+    "provenance": [
+      {
+        "field": "emails",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "full_name",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "city",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "country",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "years_experience",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[ai]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[neuroscience]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[game ai]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[alphago]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[Google DeepMind]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[DeepMind]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      }
+    ]
+  },
+  {
+    "name": "Andrew Ng",
+    "primary_email": "andrew@deeplearning.ai",
+    "all_emails": [
+      "andrew@deeplearning.ai"
+    ],
+    "phone": "(555) 123-0008",
+    "city": "Palo Alto",
+    "skills": [
+      "machine learning",
+      "online education",
+      "robotics"
+    ],
+    "github": "https://github.com/andrewng",
+    "current_employer": "DeepLearning.AI",
+    "confidence": 0.797,
+    "provenance": [
+      {
+        "field": "emails",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "phones",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "full_name",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "city",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "region",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "country",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "github",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "headline",
+        "source": "GitHub_API",
+        "method": "api_fetch"
+      },
+      {
+        "field": "years_experience",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[machine learning]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[online education]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[robotics]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[DeepLearning.AI]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[Baidu]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      }
+    ]
+  },
+  {
+    "name": "Fei-Fei Li",
+    "primary_email": "feifei@stanford.edu",
+    "all_emails": [
+      "feifei@stanford.edu"
+    ],
+    "city": "Stanford",
+    "skills": [
+      "computer vision",
+      "cognitive neuroscience",
+      "ai"
+    ],
+    "current_employer": "Stanford University",
+    "confidence": 0.834,
+    "provenance": [
+      {
+        "field": "emails",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "full_name",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "city",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "region",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "country",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "years_experience",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[computer vision]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[cognitive neuroscience]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[ai]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[Stanford University]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[Google Cloud]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      }
+    ]
+  },
+  {
+    "name": "Geoffrey Hinton",
+    "primary_email": "hinton@toronto.edu",
+    "all_emails": [
+      "hinton@toronto.edu"
+    ],
+    "phone": "(555) 123-0010",
+    "city": "Toronto",
+    "skills": [
+      "neural networks",
+      "deep learning",
+      "backpropagation"
+    ],
+    "current_employer": "University of Toronto",
+    "confidence": 0.843,
+    "provenance": [
+      {
+        "field": "emails",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "phones",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "full_name",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "city",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "country",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "years_experience",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[neural networks]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[deep learning]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[backpropagation]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[University of Toronto]",
+        "source": "Recruiter_CSV",
+        "method": "csv_parser"
+      },
+      {
+        "field": "experience[Google]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[University of Toronto]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      }
+    ]
+  },
+  {
+    "name": "Linus Torvalds",
+    "primary_email": "torvalds@linux-foundation.org",
+    "all_emails": [
+      "torvalds@linux-foundation.org"
+    ],
+    "city": "Portland",
+    "skills": [
+      "c",
+      "linux kernel",
+      "git",
+      "operating systems"
+    ],
+    "github": "https://github.com/torvalds",
+    "current_employer": "Linux Foundation",
+    "confidence": 0.838,
+    "provenance": [
+      {
+        "field": "emails",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "full_name",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "city",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "region",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "country",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "github",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "years_experience",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[c]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[linux kernel]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[git]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[operating systems]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[Linux Foundation]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "education[University of Helsinki]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      }
+    ]
+  },
+  {
+    "name": "Ilya Sutskever",
+    "primary_email": "ilya@openai.com",
+    "all_emails": [
+      "ilya@openai.com"
+    ],
+    "city": "San Francisco",
+    "skills": [
+      "deep learning",
+      "neural networks"
+    ],
+    "current_employer": "OpenAI",
+    "confidence": 0.81,
+    "provenance": [
+      {
+        "field": "emails",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "full_name",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "city",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "region",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "country",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "years_experience",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[deep learning]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "skills[neural networks]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[OpenAI]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      },
+      {
+        "field": "experience[Google]",
+        "source": "ATS_JSON",
+        "method": "gemini_schema_extraction"
+      }
+    ]
+  }
+]
