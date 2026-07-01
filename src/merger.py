@@ -66,36 +66,76 @@ class CandidateMerger:
         for edu in data.education:
             edu.end_year = normalize_date(edu.end_year) 
 
+class UnionFind:
+    def __init__(self, size):
+        self.parent = list(range(size))
+        
+    def find(self, i):
+        if self.parent[i] == i:
+            return i
+        self.parent[i] = self.find(self.parent[i])
+        return self.parent[i]
+        
+    def union(self, i, j):
+        root_i = self.find(i)
+        root_j = self.find(j)
+        if root_i != root_j:
+            self.parent[root_i] = root_j
+
     def group_records(self, records: List[SourceRecord]) -> List[List[SourceRecord]]:
         """
-        Groups SourceRecords by matching Primary Key (email) or Secondary Key (normalized name).
+        Groups SourceRecords by matching Hard Identifiers only (email, phone, github, linkedin).
+        Uses an O(N) Union-Find algorithm. Removes all soft matching (e.g. name, city) 
+        to ensure deterministic, non-corrupting merges.
         """
-        groups: List[List[SourceRecord]] = []
-        
-        for record in records:
-            matched_group = None
-            cand_emails = set(e.lower() for e in record.data.emails if e)
-            cand_name = record.data.full_name.lower().strip() if record.data.full_name else ""
+        n = len(records)
+        if n == 0:
+            return []
             
-            for group in groups:
-                # Check email match (Primary Key)
-                group_emails = set(e.lower() for r in group for e in r.data.emails if e)
-                if cand_emails and cand_emails.intersection(group_emails):
-                    matched_group = group
-                    break
-                    
-                # Check name match (Secondary Key) if no emails present (e.g. some Recruiter Notes)
-                group_names = set(r.data.full_name.lower().strip() for r in group if r.data.full_name)
-                if not cand_emails and cand_name and cand_name in group_names:
-                    matched_group = group
-                    break
-                    
-            if matched_group is not None:
-                matched_group.append(record)
-            else:
-                groups.append([record])
+        uf = UnionFind(n)
+        
+        email_to_ids = defaultdict(list)
+        phone_to_ids = defaultdict(list)
+        github_to_ids = defaultdict(list)
+        linkedin_to_ids = defaultdict(list)
+        
+        for i, record in enumerate(records):
+            data = record.data
+            
+            for e in data.emails:
+                if e: email_to_ids[e.lower().strip()].append(i)
                 
-        return groups
+            for p in data.phones:
+                if p: phone_to_ids[p.strip()].append(i)
+                
+            if data.github:
+                github_to_ids[data.github.lower().strip()].append(i)
+                
+            if data.linkedin:
+                linkedin_to_ids[data.linkedin.lower().strip()].append(i)
+                
+        # Union by any hard identifier match
+        for ids in email_to_ids.values():
+            for i in range(1, len(ids)):
+                uf.union(ids[0], ids[i])
+                
+        for ids in phone_to_ids.values():
+            for i in range(1, len(ids)):
+                uf.union(ids[0], ids[i])
+                
+        for ids in github_to_ids.values():
+            for i in range(1, len(ids)):
+                uf.union(ids[0], ids[i])
+                
+        for ids in linkedin_to_ids.values():
+            for i in range(1, len(ids)):
+                uf.union(ids[0], ids[i])
+                    
+        groups_dict = defaultdict(list)
+        for i in range(n):
+            groups_dict[uf.find(i)].append(records[i])
+            
+        return list(groups_dict.values())
         
     def merge(self, records: List[SourceRecord]) -> List[CanonicalProfile]:
         # 1. Normalize all inputs in-place
