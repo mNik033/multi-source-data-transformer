@@ -35,7 +35,7 @@ def main():
     parser.add_argument("--csv", help="Path to input CSV file")
     parser.add_argument("--ats", help="Path to ATS JSON payload")
     parser.add_argument("--notes", help="Path to recruiter notes folder")
-    parser.add_argument("--config", help="Path to projection config JSON", required=True)
+    parser.add_argument("--config", help="Path to projection config JSON (optional)")
     parser.add_argument("--out", help="Path to output JSON file", default="output.json")
     
     args = parser.parse_args()
@@ -76,27 +76,31 @@ def main():
     logger.info(f"Merged into {len(canonical_profiles)} canonical profiles.")
     
     # 3. Project Data
-    logger.info(f"--- Starting Projection Phase (config: {args.config}) ---")
-    try:
-        projector = Projector(args.config)
-        final_output = []
-        
-        for profile in canonical_profiles:
-            try:
-                projected_data = projector.project(profile)
-                final_output.append(projected_data)
-            except Exception as e:
-                logger.error(f"Failed to project candidate {profile.candidate_id}: {e}")
-                
-        # 4. Write Output
-        with open(args.out, 'w', encoding='utf-8') as f:
-            json.dump(final_output, f, indent=2)
+    final_output = []
+    if args.config:
+        logger.info(f"--- Starting Projection Phase (config: {args.config}) ---")
+        try:
+            projector = Projector(args.config)
             
-        logger.info(f"Successfully wrote {len(final_output)} records to {args.out}")
+            for profile in canonical_profiles:
+                try:
+                    projected_data = projector.project(profile)
+                    final_output.append(projected_data)
+                except Exception as e:
+                    logger.error(f"Failed to project candidate {profile.candidate_id}: {e}")
+        except Exception as e:
+            logger.error(f"Pipeline failed during projection: {e}")
+            sys.exit(1)
+    else:
+        logger.info("--- No config provided. Outputting raw canonical profiles. ---")
+        # Dump the Pydantic models directly to dicts for the default output
+        final_output = [profile.model_dump() for profile in canonical_profiles]
+                
+    # 4. Write Output
+    with open(args.out, 'w', encoding='utf-8') as f:
+        json.dump(final_output, f, indent=2)
         
-    except Exception as e:
-        logger.error(f"Pipeline failed during projection: {e}")
-        sys.exit(1)
+    logger.info(f"Successfully wrote {len(final_output)} records to {args.out}")
 
 if __name__ == "__main__":
     main()
