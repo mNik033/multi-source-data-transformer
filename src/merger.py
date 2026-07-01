@@ -39,33 +39,6 @@ def get_confidence(field: str, source: str) -> float:
     return field_matrix.get(source_type, 0.50)
 
 
-class CandidateMerger:
-    """
-    Normalizes, groups, and merges SourceRecords into CanonicalProfiles.
-    Resolves conflicts using a Source-Field Confidence Matrix and Consensus Boosting.
-    """
-    def __init__(self):
-        pass
-
-    def normalize_record(self, record: SourceRecord):
-        """Applies deterministic normalizers to a single raw record before matching."""
-        data = record.data
-        if data.phones:
-            data.phones = [p for p in (normalize_phone(p) for p in data.phones) if p]
-        
-        if data.country:
-            data.country = normalize_country(data.country)
-            
-        if data.skills:
-            data.skills = [s for s in (canonicalize_skill(s) for s in data.skills) if s]
-            
-        for exp in data.experience:
-            exp.start = normalize_date(exp.start)
-            exp.end = normalize_date(exp.end)
-            
-        for edu in data.education:
-            edu.end_year = normalize_date(edu.end_year) 
-
 class UnionFind:
     def __init__(self, size):
         self.parent = list(range(size))
@@ -81,6 +54,34 @@ class UnionFind:
         root_j = self.find(j)
         if root_i != root_j:
             self.parent[root_i] = root_j
+
+
+class CandidateMerger:
+    """
+    Normalizes, groups, and merges SourceRecords into CanonicalProfiles.
+    Resolves conflicts using a Source-Field Confidence Matrix and Consensus Boosting.
+    """
+    def __init__(self):
+        pass
+
+    def normalize_record(self, record: SourceRecord):
+        """Applies deterministic normalizers to a single raw record before matching."""
+        data = record.data
+        if data.country:
+            data.country = normalize_country(data.country)
+            
+        if data.phones:
+            data.phones = [p for p in (normalize_phone(p, data.country) for p in data.phones) if p]
+            
+        if data.skills:
+            data.skills = [s for s in (canonicalize_skill(s) for s in data.skills) if s]
+            
+        for exp in data.experience:
+            exp.start = normalize_date(exp.start)
+            exp.end = normalize_date(exp.end)
+            
+        for edu in data.education:
+            edu.end_year = normalize_date(edu.end_year) 
 
     def group_records(self, records: List[SourceRecord]) -> List[List[SourceRecord]]:
         """

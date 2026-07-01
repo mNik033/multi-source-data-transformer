@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../s
 
 import pytest
 from merger import CandidateMerger
-from models import SourceRecord, ExtractedCandidate, Experience, Education
+from models import SourceRecord, ExtractedCandidate, ExtractedExperience, ExtractedEducation
 
 def create_mock_record(source, name=None, email=None, city=None, headline=None, github=None, exp=None, edu=None, skills=None):
     return SourceRecord(
@@ -34,14 +34,49 @@ def test_normal_1_perfect_match_email():
     assert res[0].headline == "Dev"
 
 def test_normal_2_perfect_match_name_no_email():
-    """2. Normal: Exact name match merges if no emails present."""
+    """2. Normal: Exact name match does NOT merge if no hard identifiers are present."""
     r1 = create_mock_record("Recruiter_CSV", name="Alice Smith", city="NYC")
     r2 = create_mock_record("ATS_JSON", name="Alice Smith", headline="Dev")
     merger = CandidateMerger()
     res = merger.merge([r1, r2])
-    assert len(res) == 1
-    assert res[0].location.city == "NYC"
-    assert res[0].headline == "Dev"
+    # Under hard-matching-only, they should remain split (2 profiles)
+    assert len(res) == 2
+
+def test_hard_match_phone_and_links():
+    """Verify that records merge on phone, github, or linkedin matches even without email matches."""
+    # Merge on Phone
+    r1 = SourceRecord(
+        source_name="CSV", method="mock",
+        data=ExtractedCandidate(full_name="Alice", phones=["+15551234567"])
+    )
+    r2 = SourceRecord(
+        source_name="ATS", method="mock",
+        data=ExtractedCandidate(full_name="Alice Smith", phones=["+15551234567"], emails=["alice@test.com"])
+    )
+    
+    # Merge on GitHub
+    r3 = SourceRecord(
+        source_name="GitHub_API", method="mock",
+        data=ExtractedCandidate(full_name="Bob", github="github.com/bobdev")
+    )
+    r4 = SourceRecord(
+        source_name="Notes", method="mock",
+        data=ExtractedCandidate(full_name="Robert", github="github.com/bobdev", emails=["bob@test.com"])
+    )
+    
+    merger = CandidateMerger()
+    res = merger.merge([r1, r2, r3, r4])
+    
+    # We should have 2 merged profiles instead of 4
+    assert len(res) == 2
+    
+    alice = next(p for p in res if "Alice" in p.full_name)
+    assert "alice@test.com" in alice.emails
+    assert "+15551234567" in alice.phones
+    
+    bob = next(p for p in res if "Bob" in p.full_name or "Robert" in p.full_name)
+    assert "bob@test.com" in bob.emails
+    assert bob.links.github == "github.com/bobdev"
 
 def test_normal_3_different_candidates():
     """3. Normal: Completely different candidates result in 2 profiles."""
@@ -55,16 +90,16 @@ def test_normal_4_list_merging():
     """4. Normal: Emails and phones are combined in list fields."""
     r1 = SourceRecord(
         source_name="CSV", method="mock",
-        data=ExtractedCandidate(full_name="Alice", emails=["a@1.com"], phones=["+123"])
+        data=ExtractedCandidate(full_name="Alice", emails=["a@1.com", "shared@test.com"], phones=["+123"])
     )
     r2 = SourceRecord(
         source_name="ATS", method="mock",
-        data=ExtractedCandidate(full_name="Alice", emails=["a@2.com"], phones=["+456"])
+        data=ExtractedCandidate(full_name="Alice", emails=["a@2.com", "shared@test.com"], phones=["+456"])
     )
     merger = CandidateMerger()
     res = merger.merge([r1, r2])
     assert len(res) == 1
-    assert set(res[0].emails) == {"a@1.com", "a@2.com"}
+    assert set(res[0].emails) == {"a@1.com", "a@2.com", "shared@test.com"}
     assert "+123" in res[0].phones and "+456" in res[0].phones
 
 def test_normal_5_confidence_overwrite():
@@ -89,8 +124,8 @@ def test_edge_1_consensus_boosting():
 
 def test_edge_2_experience_preserves_multiple_roles():
     """7. Edge: Candidate with 2 roles at the same company preserves both."""
-    e1 = Experience(company="Google", title="SE", start="2020", end="2021", summary="")
-    e2 = Experience(company="Google", title="Senior SE", start="2021", end="2022", summary="")
+    e1 = ExtractedExperience(company="Google", title="SE", start="2020", end="2021", summary="")
+    e2 = ExtractedExperience(company="Google", title="Senior SE", start="2021", end="2022", summary="")
     r1 = create_mock_record("ATS_JSON", name="Bob", email="b@test.com", exp=[e1, e2])
     merger = CandidateMerger()
     res = merger.merge([r1])
@@ -98,8 +133,8 @@ def test_edge_2_experience_preserves_multiple_roles():
 
 def test_edge_3_experience_deduplicates_exact_roles():
     """8. Edge: Overlapping exact role at same company is deduplicated."""
-    e1 = Experience(company="Google", title="SE", start="2020", end="2021", summary="CSV summary")
-    e2 = Experience(company="Google", title="SE", start="2020", end="2021", summary="ATS summary")
+    e1 = ExtractedExperience(company="Google", title="SE", start="2020", end="2021", summary="CSV summary")
+    e2 = ExtractedExperience(company="Google", title="SE", start="2020", end="2021", summary="ATS summary")
     r1 = create_mock_record("Recruiter_CSV", name="Bob", email="b@test.com", exp=[e1])
     r2 = create_mock_record("ATS_JSON", name="Bob", email="b@test.com", exp=[e2])
     merger = CandidateMerger()
@@ -147,10 +182,10 @@ def test_edge_7_normalizers_integration():
             phones=["(555) 123-4567"],
             country="United States",
             experience=[
-                Experience(company="Google", title="SE", start="Jan 2021", end="Present", summary="")
+                ExtractedExperience(company="Google", title="SE", start="Jan 2021", end="Present", summary="")
             ],
             education=[
-                Education(institution="Stanford", degree="Bachelor of Science", field_of_study="CS", end_year="2023-05")
+                ExtractedEducation(institution="Stanford", degree="Bachelor of Science", field_of_study="CS", end_year="2023-05")
             ],
             skills=["reactjs"]
         )

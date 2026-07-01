@@ -4,18 +4,32 @@ import phonenumbers
 from dateutil import parser
 import pycountry
 
-def normalize_phone(phone_str: Optional[str]) -> Optional[str]:
-    """Normalizes a phone number to E.164 format."""
+def normalize_phone(phone_str: Optional[str], default_region: Optional[str] = None) -> Optional[str]:
+    """Normalizes a phone number to E.164 format using optional region context."""
     if not phone_str:
         return None
+        
+    region = None
+    if default_region and len(default_region) == 2:
+        region = default_region.upper()
+        
     try:
-        # Default to "IN" parsing if country code isn't explicitly provided with a '+'
-        parsed = phonenumbers.parse(phone_str, "IN")
-        if phonenumbers.is_valid_number(parsed):
+        # Attempt to parse using the provided region context
+        parsed = phonenumbers.parse(phone_str, region)
+        if phonenumbers.is_possible_number(parsed):
             return phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
     except phonenumbers.NumberParseException:
         pass
-    
+        
+    # If parsing failed with a region, try parsing strictly as an international number (requires '+')
+    if region:
+        try:
+            parsed = phonenumbers.parse(phone_str, None)
+            if phonenumbers.is_possible_number(parsed):
+                return phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
+        except phonenumbers.NumberParseException:
+            pass
+            
     # Fallback to the raw string if parsing fails, but strip it cleanly
     return phone_str.strip()
 

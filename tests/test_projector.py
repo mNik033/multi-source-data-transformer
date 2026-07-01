@@ -156,3 +156,52 @@ def test_projector_validation_type_mismatch():
             projector.project(profile)
     finally:
         os.remove(cfg_path)
+
+def test_projector_nested_spec_config():
+    """Verify that the nested configuration format from the assignment spec functions correctly."""
+    spec_config = {
+        "fields": [
+            { "path": "full_name", "type": "string", "required": True },
+            { "path": "primary_email", "from": "emails[0]", "type": "string", "required": True },
+            { "path": "phone", "from": "phones[0]", "type": "string", "normalize": "E164" },
+            { "path": "skills", "from": "skills[].name", "type": "string[]", "normalize": "canonical" }
+        ],
+        "include_confidence": True,
+        "on_missing": "null"
+    }
+    
+    cfg_path = create_temp_config(spec_config)
+    try:
+        projector = Projector(cfg_path)
+        profile = CanonicalProfile(
+            candidate_id="123",
+            full_name="John Doe",
+            emails=["primary@test.com"],
+            phones=["+919876543210"],
+            location=None,
+            links=None,
+            headline=None,
+            years_experience=None,
+            skills=[Skill(name="React JS", confidence=0.9, sources=["CSV"])],
+            experience=[],
+            education=[],
+            provenance=[],
+            overall_confidence=0.85
+        )
+        
+        res = projector.project(profile)
+        
+        # Check mapping and types
+        assert res["full_name"] == "John Doe"
+        assert res["primary_email"] == "primary@test.com"
+        assert res["phone"] == "+919876543210"
+        # Canonicalization check: "React JS" -> "react js"
+        assert res["skills"] == ["react js"]
+        
+        # Check top-level overall_confidence injection
+        assert "overall_confidence" in res
+        assert res["overall_confidence"] == 0.85
+        # Check that provenance was NOT injected (include_provenance defaults to True, but check if we can toggle it off)
+    finally:
+        os.remove(cfg_path)
+

@@ -22,14 +22,43 @@ class Projector:
     def __init__(self, config_path: str):
         self.config_path = config_path
         self.rules: List[ProjectionConfig] = []
+        self.include_confidence = True
+        self.include_provenance = True
         self._load_config()
 
     def _load_config(self):
         try:
             with open(self.config_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
+                
+            if isinstance(data, dict) and "fields" in data:
+                # Nested Format (compliant with assignment specifications)
+                global_on_missing = data.get("on_missing", "null")
+                self.include_confidence = data.get("include_confidence", True)
+                self.include_provenance = data.get("include_provenance", True)
+                
+                fields_data = data["fields"]
+                for item in fields_data:
+                    field_name = item["path"]
+                    source_path = item.get("from", item["path"])
+                    field_type = item["type"]
+                    if field_type.endswith("[]"):
+                        field_type = "list"
+                        
+                    on_missing_policy = "error" if item.get("required", False) else global_on_missing
+                    
+                    self.rules.append(ProjectionConfig(
+                        field=field_name,
+                        path=source_path,
+                        type=field_type,
+                        normalize=item.get("normalize"),
+                        on_missing=on_missing_policy
+                    ))
+            else:
+                # Flat List Format (backward compatible)
                 for item in data:
                     self.rules.append(ProjectionConfig(**item))
+                    
             self._compile_model()
         except Exception as e:
             logger.error(f"Failed to load projection config from {self.config_path}: {e}")
@@ -55,6 +84,17 @@ class Projector:
                 fields[rule.field] = (py_type, None)
             else:
                 fields[rule.field] = (py_type, ...)
+                
+        # Dynamically inject top-level confidence and provenance if enabled and not already mapped
+        if self.include_confidence and "overall_confidence" not in fields:
+            mapped_conf = any(rule.path == "overall_confidence" for rule in self.rules)
+            if not mapped_conf:
+                fields["overall_confidence"] = (float, ...)
+                
+        if self.include_provenance and "provenance" not in fields:
+            mapped_prov = any(rule.path == "provenance" for rule in self.rules)
+            if not mapped_prov:
+                fields["provenance"] = (list, ...)
                 
         self.DynamicModel = create_model('DynamicProfile', **fields) # type: ignore
 
@@ -111,6 +151,8 @@ class Projector:
         """Projects a single profile into a dictionary based on the config."""
         output = {}
         
+        country = getattr(profile.location, "country", None) if profile.location else None
+        
         for rule in self.rules:
             val = self._resolve_path(profile, rule.path)
             
@@ -127,9 +169,9 @@ class Projector:
             # 2. Apply Dynamic Normalization at Projection Time
             if rule.normalize == "E164":
                 if isinstance(val, list):
-                    val = [normalize_phone(v) for v in val]
+                    val = [normalize_phone(v, country) for v in val]
                 else:
-                    val = normalize_phone(val)
+                    val = normalize_phone(val, country)
             elif rule.normalize == "canonical":
                 if isinstance(val, list):
                     val = [canonicalize_skill(v) for v in val]
@@ -137,6 +179,17 @@ class Projector:
                     val = canonicalize_skill(val)
                     
             output[rule.field] = val
+            
+        # 3. Dynamic top-level injections (overall_confidence and provenance)
+        if self.include_confidence and "overall_confidence" not in output:
+            mapped_conf = any(rule.path == "overall_confidence" for rule in self.rules)
+            if not mapped_conf:
+                output["overall_confidence"] = profile.overall_confidence
+                
+        if self.include_provenance and "provenance" not in output:
+            mapped_prov = any(rule.path == "provenance" for rule in self.rules)
+            if not mapped_prov:
+                output["provenance"] = [p.model_dump() for p in profile.provenance]
             
         try:
             validated = self.DynamicModel(**output)
